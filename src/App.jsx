@@ -1,7 +1,7 @@
 //rafce
 import React from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import LandingPage from '/.pages/LandingPage'
+import LandingPage from './pages/LandingPage'
 import SearchPage from './pages/SearchPage'
 import RestaurantDetail from './pages/RestaurantDetail'
 import FavoritesPage from './pages/FavoritesPage'
