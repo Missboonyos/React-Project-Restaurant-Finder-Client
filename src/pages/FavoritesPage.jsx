@@ -1,11 +1,81 @@
 // rafce
-import React from 'react'
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ArrowLeft, Star, MapPin, Trash2 } from 'lucide-react';
+import { useFavorites } from '../context/FavoritesContext';
+import './FavoritesPage.css';
 
-const FavoritesPage = () => {
+function FavoritesPage() {
+  const navigate = useNavigate();
+  const { favorites, removeFavorite} = useFavorites();
+
+  const handleRestaurantClick = (id) => {
+    navigate(`/restaurant/${id}`)
+  }
+
+  const handleRemove = (e, restaurantId) => {
+    e.stopPropagation();
+    removeFavorite(restaurantId);
+  };
+
   return (
-    <div>
-        FavoritesPage
+    <div className='favorites-page'>
+      {/* Header */}
+      <div className='favorites-header'>
+        <button className='back-button' onClick={() => navigate('/')}>
+          <ArrowLeft size={24} />
+        </button>
+        <h1>My Favorites</h1>
+      </div>
+
+    {/* Content */}
+    <div className='favorites-content'>
+      {favorites.length === 0 ? (
+        <div className='empty-favorites'>
+          <p>You haven't added any favorites yet.</p>
+          <button onClick={()=> navigate('/search')}>Browse Restaurants</button>
+        </div>
+      ) : (
+        <div className='favorites-grid'>
+          {favorites.map((restaurant) => (
+            <div
+              key={restaurant.id}
+              className='favorite-card'
+              onClick={()=> handleRestaurantClick(restaurant.id)}
+            >
+              <div
+                className='favorite-image'
+                style={{ backgroundImage: `url(${restaurant.image_url})`}}
+              >
+                <button
+                  className='remove-btn'
+                  onClick={(e)=> handleRemove(e, restaurant.id)}
+                  title='Remove from favorites'
+                >
+                  <Trash2 size={18} />
+                </button>
+              </div>
+
+              <div className='favorite-info'>
+                <h3>{restaurant.name}</h3>
+                <span className='favorite-category'>{restaurant.category}</span>
+
+                <div className='favorite-rating'>
+                  <Star size={16} fill='#ffc107' color='#ffc107' />
+                  <span>{restaurant.rating}</span>
+
+                <div className='favorites-address'>
+                  <MapPin size={14} />
+                  <span>{restaurant.address}</span>
+                </div>
+                </div>
+              </div>
+            </div>
+          ))}
+       </div>
+      )}
     </div>
+  </div>
   )
 }
 

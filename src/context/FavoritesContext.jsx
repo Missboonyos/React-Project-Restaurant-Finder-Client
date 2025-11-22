@@ -18,9 +18,14 @@ export function FavoritesProvider({ children }) {
     }
 
     // Remove restaurant from favorites
-    const isFavorite = (restaurantId) => {
+    const removeFavorite = (restaurantId) => {
         return favorites.some((r)=> r.id === restaurantId)
     }
+
+    // Check if restaurant is in favorites
+    const isFavorite = (restaurantId) => {
+        return favorites.some((r) => r.id === restaurantId);
+  };
 
     const value = {
         favorites,
