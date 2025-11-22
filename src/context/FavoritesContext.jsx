@@ -1,19 +1,46 @@
 //rafce
-import React, { Children, createContext, useContext, useState } from 'react'
+import React, { createContext, useContext, useState } from 'react'
 
 const FavoritesContext = createContext();
 
-export function FavoriteProvider({ children }) {
+export function FavoritesProvider({ children }) {
     const [favorites, setFavorites] = useState([]);
 
+    // Add restaurant to favorites
     const addFavorite = (restaurant) => {
-        setFavorites(favorites.filter(r => r.id !== restaurantId));
-    };
+        setFavorites((prev)=> {
+            // Check if already exists
+            if (prev.some((fav) => fav.id === restaurant.id)){
+                return prev;
+            }
+            return [...prev, restaurant];
+        })
+    }
+
+    // Remove restaurant from favorites
+    const isFavorite = (restaurantId) => {
+        return favorites.some((r)=> r.id === restaurantId)
+    }
+
+    const value = {
+        favorites,
+        addFavorite,
+        removeFavorite,
+        isFavorite
+    }
 
     return (
-        <FavoritesContext.Provider value={{ favorites, addFavorite, removeFavorite, isFavorite}}>
+        <FavoritesContext.Provider value ={value}>
             {children}
         </FavoritesContext.Provider>
     )
 }
-export const useFavorites = () => useContext(FavoritesContext)
+
+export const useFavorites = () => {
+    const context = useContext(FavoritesContext);
+    if (!context) {
+        throw new Error('useFavorites must be used within FavoritesProvider')
+    }
+    return context;
+}
+

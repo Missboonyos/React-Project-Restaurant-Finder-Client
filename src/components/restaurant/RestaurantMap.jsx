@@ -8,7 +8,8 @@ const RestaurantMap = ({ restaurants, center}) {
     <MapContainer center={center} zoom={13} style={{height: '400px'}}>
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       {restaurants.map(restaurant =>(
-        <Marker key={restaurant.id} position={[restaurant.location.lat, restaurant.location.lng]} >
+        <Marker key={restaurant.id} 
+            position={[restaurant.location.lat, restaurant.location.lng]} >
           <Popup>{restaurant.name}</Popup>
         </Marker>
       ))}
