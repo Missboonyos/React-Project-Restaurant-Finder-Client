@@ -121,7 +121,7 @@ Here's what you need to do:
 npm install react-leaflet leaflet
 ```
 ### Step 2: Create new file
-Create: src/components/RestaurantMap.jsx
+Create: src/components/map/RestaurantMap.jsx
 (Copy code from artifact above)
 ### Step 3: Update SearchPage.jsx
 Replace your current SearchPage.jsx with the updated version
@@ -150,7 +150,7 @@ After adding the map:
 ```
 src/
 ├── components/
-│   └── RestaurantMap.jsx    ← NEW FILE
+│   └── map/RestaurantMap.jsx    ← NEW FILE
 ├── context/
 │   └── FavoritesContext.jsx
 ├── data/
@@ -167,3 +167,59 @@ src/
 ├── App.jsx
 ├── App.css
 └── main.jsx
+```
+
+## 📋 Summary - Add Map Feature
+Here's what you need to do:
+### Step 1: Install packages
+```bash
+npm install react-leaflet leaflet
+```
+### Step 2: Create new file
+Create: src/components/RestaurantMap.jsx (Copy code from artifact above)
+### Step 3: Update SearchPage.jsx
+Replace your current SearchPage.jsx with the updated version
+### Step 4: Update SearchPage.css
+Add the new CSS to the bottom of your existing SearchPage.css
+### Step 5: Test it!
+```bash
+npm run dev
+```
+
+---
+
+## 🎯 What You'll See
+
+After adding the map:
+
+1. **Go to Search Page** → You'll see **List** and **Map** toggle buttons
+2. **Click "Map"** → Shows all restaurants on a map
+3. **Click a marker** → Shows popup with restaurant info
+4. **Click "View Details"** → Goes to restaurant detail page
+5. **Click "View on MAP"** from Landing Page → Goes directly to map view
+
+---
+
+## 📁 Your Updated Folder Structure
+```
+src/
+├── components/
+│   └── map/RestaurantMap.jsx    ← NEW FILE
+├── context/
+│   └── FavoritesContext.jsx
+├── data/
+│   └── mockRestaurants.js
+├── pages/
+│   ├── FavoritesPage.jsx
+│   ├── FavoritesPage.css
+│   ├── LandingPage.jsx
+│   ├── LandingPage.css
+│   ├── RestaurantDetail.jsx
+│   ├── RestaurantDetail.css
+│   ├── SearchPage.jsx       ← UPDATED
+│   └── SearchPage.css       ← UPDATED
+├── App.jsx
+├── App.css
+└── main.jsx
+```
+

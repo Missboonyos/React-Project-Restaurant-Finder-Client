@@ -1,9 +1,10 @@
 // src/pages/SearchPage.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Search, MapPin, Star, ArrowLeft } from 'lucide-react';
+import { Search, MapPin, Star, ArrowLeft, Map, List } from 'lucide-react';
 import { useFavorites } from '../context/FavoritesContext';
 import { mockRestaurants } from '../data/mockRestaurants';
+import RestaurantMap from '../components/map/RestaurantMap';
 import './SearchPage.css';
 
 function SearchPage() {
@@ -14,6 +15,15 @@ function SearchPage() {
   const [restaurants, setRestaurants] = useState([]);
   const [searchQuery, setSearchQuery] = useState(searchParams.get('query') || '');
   const [loading, setLoading] = useState(false);
+  const [viewMode, setViewMode] = useState(searchParams.get('view') || 'list'); // list or map
+
+  useEffect(() => {
+    // Check if view=map in URL
+    const view = searchParams.get('view');
+    if (view === 'map') {
+      setViewMode('map');
+    }
+  }, [searchParams])
 
   useEffect(() => {
     setLoading(true);
@@ -59,6 +69,10 @@ function SearchPage() {
     navigate(`/restaurant/${id}`);
   };
 
+  const toggleView = () => {
+    setViewMode(viewMode === 'list' ? 'map' : 'list')
+  }
+
   return (
     <div className="search-page">
       {/* Header */}
@@ -86,6 +100,24 @@ function SearchPage() {
             Search
           </button>
         </form>
+
+        {/* View Toggle Button */}
+        <div className='view-toggle'>
+          <button 
+            className={`toggle-btn ${viewMode === 'list' ? 'active' : ''}`}
+            onClick={ ()=> setViewMode('list')}
+          >
+            <List size={18} />
+            <span>List</span>
+          </button>
+          <button
+            className={`toggle-btn ${viewMode === 'map' ? 'active' : ''}`}
+            onClick={()=> setViewMode('map')}
+          >
+            <Map size={18} />
+            <span>Map</span>
+          </button>
+        </div>
       </div>
 
       {/* Results */}
@@ -95,6 +127,12 @@ function SearchPage() {
         ) : restaurants.length === 0 ? (
           <div className="no-results">
             <p>No restaurants found</p>
+          </div>
+        ) : viewMode === 'map' ?(
+          // Map View
+          <div className='map-view'>
+            <RestaurantMap restaurants={restaurants} />
+            <p className='map-hint'>Click on markers to see restaurant details</p>
           </div>
         ) : (
           <div className="restaurant-grid">
