@@ -170,3 +170,15 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Add to bottom of src/pages/FavoritesPage.css */
+
+.loading-favorites {
+  text-align: center;
+  padding: 60px 40px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  color: #667eea;
+  font-size: 1.1rem;
+}

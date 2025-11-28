@@ -22,7 +22,7 @@ function LandingPage() {
   }
 
   const handleMapClick = () => {
-    navigate('/serach?view=map')
+    navigate('/search?view=map')
   }
 
   return (

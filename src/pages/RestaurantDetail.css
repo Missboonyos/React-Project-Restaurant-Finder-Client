@@ -285,3 +285,12 @@
     font-size: 1.5rem;
   }
 }
+
+/* Add this to the bottom of src/pages/RestaurantDetail.css */
+
+.no-data {
+  text-align: center;
+  color: #999;
+  padding: 20px;
+  font-style: italic;
+}
