@@ -1,6 +1,7 @@
 //rafce
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import { FavoritesProvider } from './context/FavoritesContext';
 import { AuthProvider } from './context/AuthContext';
 import LandingPage from './pages/LandingPage';
@@ -17,6 +18,38 @@ const App = () => {
     <AuthProvider>
       <FavoritesProvider>    
         <BrowserRouter>
+          {/* Toast Container - Show all toasts */}
+          <Toaster 
+            position='top-center'
+            reverseOrder={false}
+            toastOptions={{
+              // Default options
+              duration: 3000,
+              style: {
+                background: '#363636',
+                color: '#fff',
+                padding: '16px',
+                borderRadius: '10px'
+              },
+              // Success toast style
+              success: {
+                duration: 3000,
+                iconTheme: {
+                  primary: '4caf50',
+                  secondary: '#fff'
+                }
+              },
+              // Error toast style
+              error: {
+                duration: 4000,
+                iconTheme: {
+                  primary: '#e74c3c',
+                  secondary: '#fff'
+                }
+              }
+            }}                    
+          />
+
           <Routes>
             <Route path="/" element={<LandingPage/>} />
             <Route path="/search" element={<SearchPage/>} />

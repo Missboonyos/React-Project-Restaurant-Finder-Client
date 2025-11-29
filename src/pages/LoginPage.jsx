@@ -1,7 +1,9 @@
 // src/pages/LoginPage.jsx
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
+import ButtonSpinner from '../components/ButtonSpinner';
 import './AuthPages.css';
 
 function LoginPage() {
@@ -30,9 +32,10 @@ function LoginPage() {
     const result = await login(formData);
 
     if (result.success) {
-      navigate('/'); // Go to home page
+      toast.success(`Welcome back, ${result.data.user.name}! 👋`);
+      setTimeout(()=> navigate('/'), 500); // Go to home page
     } else {
-      setError(result.error);
+      toast.error(result.error);
     }
     
     setLoading(false);
@@ -72,7 +75,7 @@ function LoginPage() {
           </div>
 
           <button type="submit" className="auth-button" disabled={loading}>
-            {loading ? 'Logging in...' : 'Login'}
+            {loading ? <ButtonSpinner /> : 'Login'}
           </button>
         </form>
 

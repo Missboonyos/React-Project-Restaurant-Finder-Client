@@ -5,6 +5,9 @@ import { ArrowLeft, Star, MapPin, Phone } from 'lucide-react';
 import { useFavorites } from '../context/FavoritesContext';
 import { useAuth } from '../context/AuthContext';
 import { restaurantAPI, reviewAPI } from '../services/api';
+import toast from 'react-hot-toast'
+import LoadingSpinner from '../components/LoadingSpinner'
+import ButtonSpinner from '../components/ButtonSpinner';
 import './RestaurantDetail.css';
 
 function RestaurantDetail() {
@@ -40,15 +43,27 @@ function RestaurantDetail() {
 
   const handleFavoriteToggle = async () => {
     if (!isAuthenticated) {
-      alert('Please login to add favorites');
-      navigate('/login');
+      toast.error('Please login to add favorites', {
+        icon: '🔒',
+      });
+      setTimeout(() => navigate('/login'), 1500);
       return;
     }
 
-    if (isFavorite(restaurant.id)) {
+    try {
+      if (isFavorite(restaurant.id)) {
       await removeFavorite(restaurant.id);
+      toast.success('Removed from favorites', {
+        icon: '💔',
+      });
     } else {
       await addFavorite(restaurant);
+      toast.success('Added to favorites!', {
+        icon: '❤️',
+      });
+    }
+    } catch (error) {
+      toast.error('Failed to update favorites');
     }
   };
 
@@ -56,7 +71,7 @@ function RestaurantDetail() {
     e.preventDefault();
     
     if (!newReview.user_name || !newReview.comment) {
-      alert('Please fill in all fields');
+      toast.error('Please fill in all fields');
       return;
     }
 
@@ -64,13 +79,13 @@ function RestaurantDetail() {
 
     try {
       await reviewAPI.add(id, newReview);
-      alert('Review submitted successfully!');
+      toast.success('Review submitted successfully! 🎉');
       setNewReview({ user_name: '', rating: 5, comment: '' });
       
       // Refresh restaurant details to show new review
       await fetchRestaurantDetails();
     } catch (err) {
-      alert('Failed to submit review: ' + err.message);
+      toast.error('Failed to submit review: ' + err.message);
       console.error('Error submitting review:', err);
     } finally {
       setSubmittingReview(false);
@@ -78,7 +93,14 @@ function RestaurantDetail() {
   };
 
   if (loading) {
-    return <div className="loading-page">Loading restaurant details...</div>;
+    return (
+    <div className="loading-page">
+      <LoadingSpinner 
+        message='Loading restaurant details...' 
+        size='large' 
+      />
+    </div>
+    );
   }
 
   if (error || !restaurant) {
@@ -178,7 +200,7 @@ function RestaurantDetail() {
               required
             />
             <button type="submit" disabled={submittingReview}>
-              {submittingReview ? 'Submitting...' : 'Submit Review'}
+              {submittingReview ? <ButtonSpinner /> : 'Submit Review'}
             </button>
           </form>
 

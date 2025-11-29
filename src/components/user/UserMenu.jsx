@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, LogOut, Heart, X } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
 import './UserMenu.css';
 
@@ -13,6 +14,7 @@ function UserMenu() {
   const handleLogout = () => {
     logout();
     setIsOpen(false);
+    toast.success('Logged out successfully! See you soon! 👋');
     navigate('/');
   };
 

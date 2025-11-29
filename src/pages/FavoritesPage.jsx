@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Star, MapPin, Trash2 } from 'lucide-react';
 import { useFavorites } from '../context/FavoritesContext';
 import { useAuth } from '../context/AuthContext';
+import LoadingSpinner from '../components/LoadingSpinner';
+import UserMenu from '../components/user/UserMenu'
 import './FavoritesPage.css';
 
 function FavoritesPage() {
@@ -29,6 +31,7 @@ function FavoritesPage() {
             <ArrowLeft size={24} />
           </button>
           <h1>My Favorites</h1>
+          <UserMenu />
         </div>
 
         <div className="favorites-content">
@@ -49,12 +52,13 @@ function FavoritesPage() {
           <ArrowLeft size={24} />
         </button>
         <h1>My Favorites</h1>
+        <UserMenu />
       </div>
 
       {/* Content */}
       <div className="favorites-content">
         {loading ? (
-          <div className="loading-favorites">Loading your favorites...</div>
+          <LoadingSpinner message="Loading your favorites..." size='large' />
         ) : favorites.length === 0 ? (
           <div className="empty-favorites">
             <p>You haven't added any favorites yet.</p>

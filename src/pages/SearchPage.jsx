@@ -2,11 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Search, MapPin, Star, ArrowLeft, Map, List } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { useFavorites } from '../context/FavoritesContext';
 import { useAuth } from '../context/AuthContext';
 import { restaurantAPI } from '../services/api';
 import RestaurantMap from '../components/map/RestaurantMap';
 import UserMenu from '../components/user/UserMenu';
+import LoadingSpinner from '../components/LoadingSpinner'
 import './SearchPage.css';
 
 function SearchPage() {
@@ -52,6 +54,7 @@ function SearchPage() {
       setRestaurants(data);
     } catch (err) {
       setError('Failed to load restaurants. Please try again.');
+      toast.error('Failed to load restaurants');
       console.error('Error fetching restaurants:', err);
     } finally {
       setLoading(false);
@@ -65,19 +68,46 @@ function SearchPage() {
     }
   };
 
+  // const handleFavoriteToggle = async (restaurant) => {
+  //   if (!isAuthenticated) {
+  //     alert('Please login to add favorites');
+  //     navigate('/login');
+  //     return;
+  //   }
+
+  //   if (isFavorite(restaurant.id)) {
+  //     await removeFavorite(restaurant.id);
+  //   } else {
+  //     await addFavorite(restaurant);
+  //   }
+  // };
+
+  // Changed from above to toast
   const handleFavoriteToggle = async (restaurant) => {
     if (!isAuthenticated) {
-      alert('Please login to add favorites');
-      navigate('/login');
+      toast.error('Please login to add favorites', {
+        icon: '🔒',
+      });
+      setTimeout(() => navigate('/login'), 1500);
       return;
     }
 
-    if (isFavorite(restaurant.id)) {
-      await removeFavorite(restaurant.id);
-    } else {
-      await addFavorite(restaurant);
+    try {
+      if (isFavorite(restaurant.id)) {
+        await removeFavorite(restaurant.id);
+        toast.success('Removed from favorites', {
+          icon: '💔',
+        })
+      } else {
+        await addFavorite(restaurant);
+        toast.success('Added to favorites!', {
+          icon: '❤️',
+        })
+      }
+    } catch (error) {
+      toast.error('Failed to update favorites');
     }
-  };
+  }
 
   const handleRestaurantClick = (id) => {
     navigate(`/restaurant/${id}`);
@@ -134,7 +164,7 @@ function SearchPage() {
       {/* Results */}
       <div className="results-container">
         {loading ? (
-          <div className="loading">Loading restaurants...</div>
+          <LoadingSpinner message='Finding delicious restaurants...' size='large' />
         ) : error ? (
           <div className="error-message">
             <p>{error}</p>
