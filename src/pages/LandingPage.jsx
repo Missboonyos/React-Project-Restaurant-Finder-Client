@@ -1,8 +1,9 @@
 // rafce
 import React, { useState } from 'react'
-import './LandingPage.css'
 import { useNavigate } from 'react-router-dom'
 import { MapPin } from 'lucide-react';
+import UserMenu from '../components/user/UserMenu';
+import './LandingPage.css'
 
 function LandingPage() {
   const navigate = useNavigate();
@@ -27,6 +28,11 @@ function LandingPage() {
 
   return (
     <div className='landing-page'>
+      {/* User Menu - positioned absolutely */}
+      <div className='user-menu-container'>
+        <UserMenu />
+      </div>
+
       <div className='landing-container'>
         <h1 className='title'>Let's Tasty!</h1>
 

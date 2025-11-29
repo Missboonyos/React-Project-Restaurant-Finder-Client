@@ -6,6 +6,7 @@ import { useFavorites } from '../context/FavoritesContext';
 import { useAuth } from '../context/AuthContext';
 import { restaurantAPI } from '../services/api';
 import RestaurantMap from '../components/map/RestaurantMap';
+import UserMenu from '../components/user/UserMenu';
 import './SearchPage.css';
 
 function SearchPage() {
@@ -90,6 +91,7 @@ function SearchPage() {
           <ArrowLeft size={24} />
         </button>
         <h1>Find Restaurants</h1>
+        <UserMenu />
       </div>
 
       {/* Search Bar */}

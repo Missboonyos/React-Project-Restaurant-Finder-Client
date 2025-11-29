@@ -9,7 +9,15 @@
   padding: 20px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 15px;
+}
+
+.search-header h1 {
+  font-size: 1.5rem;
+  color: white;
+  flex: 1;
+  text-align: center;
 }
 
 .back-button {
@@ -26,11 +34,6 @@
 
 .back-button:hover {
   background: rgba(255, 255, 255, 0.3);
-}
-
-.search-header h1 {
-  font-size: 1.5rem;
-  color: white;
 }
 
 /* Search Form */

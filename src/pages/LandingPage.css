@@ -163,3 +163,19 @@
     width: 100%;
   }
 }
+
+/* Add to the bottom of src/pages/LandingPage.css */
+
+.user-menu-container {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  z-index: 100;
+}
+
+@media (max-width: 600px) {
+  .user-menu-container {
+    top: 20px;
+    right: 20px;
+  }
+}
