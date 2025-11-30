@@ -24,8 +24,23 @@ export function FavoritesProvider({ children }) {
     if (!isAuthenticated) return;
 
     setLoading(true);
+
+    // Start timer
+    const startTime = Date.now();
+    const minLoadingTime = 500; // 500ms minimum loading time
+
     try {
       const data = await favoritesAPI.getAll();
+
+      // Calculate remaining time to meet minimum loading time
+      const elapsedTime = Date.now() - startTime;
+      const remainingTime = Math.max(0, minLoadingTime - elapsedTime);
+
+      // Wait if needed
+      if (remainingTime > 0) {
+        await new Promise(resolve => setTimeout(resolve, remainingTime));
+      }
+
       setFavorites(data);
     } catch (error) {
       console.error('Error loading favorites:', error);

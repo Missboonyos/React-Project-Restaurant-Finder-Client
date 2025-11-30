@@ -30,8 +30,22 @@ function RestaurantDetail() {
     setLoading(true);
     setError('');
 
-    try {
+    // Start timer
+    const startTime = Date.now();
+    const minLoadingTime = 500; // 500ms minimum loading time
+    
+    try {      
       const data = await restaurantAPI.getById(id);
+
+      // Calculate remaining time to meet minimum loading time
+      const elapsedTime = Date.now() - startTime;
+      const remainingTime = Math.max(0, minLoadingTime - elapsedTime);
+
+      // Wait if needed
+      if (remainingTime > 0) {
+        await new Promise(resolve => setTimeout(resolve, remainingTime));
+      }
+
       setRestaurant(data);
     } catch (err) {
       setError('Failed to load restaurant details');
@@ -77,8 +91,22 @@ function RestaurantDetail() {
 
     setSubmittingReview(true);
 
+    // Start timer
+    const startTime = Date.now();
+    const minLoadingTime = 800; // 800ms for button spinner visibility
+
     try {
       await reviewAPI.add(id, newReview);
+
+      // Calculate remaining time to meet minimum loading time
+      const elapsedTime = Date.now() - startTime;
+      const remainingTime = Math.max(0, minLoadingTime - elapsedTime);
+      
+      // Wait if needed
+      if (remainingTime > 0) {
+        await new Promise(resolve => setTimeout(resolve, remainingTime));
+      }
+
       toast.success('Review submitted successfully! 🎉');
       setNewReview({ user_name: '', rating: 5, comment: '' });
       

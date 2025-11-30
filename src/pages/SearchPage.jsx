@@ -1,7 +1,7 @@
 // src/pages/SearchPage.jsx
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Search, MapPin, Star, ArrowLeft, Map, List } from 'lucide-react';
+import { Search, MapPin, Star, ArrowLeft, Map, List, SlidersHorizontal } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useFavorites } from '../context/FavoritesContext';
 import { useAuth } from '../context/AuthContext';
@@ -18,10 +18,13 @@ function SearchPage() {
   const { isAuthenticated } = useAuth();
 
   const [restaurants, setRestaurants] = useState([]);
+  const [sortedRestaurants, setSortedRestaurants] = useState([]); // For future sorting feature
   const [searchQuery, setSearchQuery] = useState(searchParams.get('query') || '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [viewMode, setViewMode] = useState(searchParams.get('view') || 'list');
+  const [sortBy, setSortBy] = useState('rating'); // Default sort by rating
+  const [showSortMenu, setShowSortMenu] = useState(false);
 
   useEffect(() => {
     const view = searchParams.get('view');
@@ -34,9 +37,18 @@ function SearchPage() {
     fetchRestaurants();
   }, [searchParams]);
 
+  // Sort restaurants whenever data or sortBy changes
+  useEffect(()=> {
+    sortRestaurants()
+  }, [restaurants, sortBy])
+
   const fetchRestaurants = async () => {
     setLoading(true);
     setError('');
+
+    // Start timer to ensure minimum loading time
+    const startTime = Date.now();
+    const minLoadingTime = 500; // 500ms minimum loading time
 
     try {
       const category = searchParams.get('category');
@@ -51,6 +63,15 @@ function SearchPage() {
         data = await restaurantAPI.getAll();
       }
 
+      // Calculate remaining time to meet minimum loading duration
+      const elapsedTime = Date.now() - startTime;
+      const remainingTime = Math.max(0, minLoadingTime - elapsedTime)
+
+      // Wait for remaining time if needed
+      if (remainingTime > 0) {
+        await new Promise(resolve => setTimeout(resolve, remainingTime));
+      }
+
       setRestaurants(data);
     } catch (err) {
       setError('Failed to load restaurants. Please try again.');
@@ -60,6 +81,36 @@ function SearchPage() {
       setLoading(false);
     }
   };
+
+  // New sorting function
+  const sortRestaurants = () => {
+    let sorted = [...restaurants];  
+
+    switch (sortBy) {
+      case 'rating':
+        sorted.sort((a, b) => b.rating - a.rating);
+        break;
+      case 'name':
+        sorted.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case 'category':
+        sorted.sort((a, b) => a.category.localeCompare(b.category));
+        break;
+      default:
+        break;
+    }
+
+    setSortedRestaurants(sorted);
+  };
+
+  // Handle sort change
+  const handleSortChange = (newSortBy) => {
+    setSortBy(newSortBy);
+    setShowSortMenu(false);
+    toast.success(`Sorted by ${newSortBy}`, {
+      icon: '🔀', duration: 2000
+    });
+  }
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -142,22 +193,63 @@ function SearchPage() {
           </button>
         </form>
 
-        {/* View Toggle Button */}
-        <div className="view-toggle">
-          <button
-            className={`toggle-btn ${viewMode === 'list' ? 'active' : ''}`}
-            onClick={() => setViewMode('list')}
-          >
-            <List size={18} />
-            <span>List</span>
-          </button>
-          <button
-            className={`toggle-btn ${viewMode === 'map' ? 'active' : ''}`}
-            onClick={() => setViewMode('map')}
-          >
-            <Map size={18} />
-            <span>Map</span>
-          </button>
+        {/* View Toggle & Sort */}
+        <div className="view-controls">
+          <div className="view-toggle">
+            <button
+              className={`toggle-btn ${viewMode === 'list' ? 'active' : ''}`}
+              onClick={() => setViewMode('list')}
+            >
+              <List size={18} />
+              <span>List</span>
+            </button>
+            <button
+              className={`toggle-btn ${viewMode === 'map' ? 'active' : ''}`}
+              onClick={() => setViewMode('map')}
+            >
+              <Map size={18} />
+              <span>Map</span>
+            </button>
+          </div>
+
+          {/* NEW: Sort Button */}
+          {viewMode === 'list' && (
+            <div className="sort-container">
+              <button
+                className="sort-button"
+                onClick={() => setShowSortMenu(!showSortMenu)}
+              >
+                <SlidersHorizontal size={18} />
+                <span>Sort</span>
+              </button>
+
+              {showSortMenu && (
+                <>
+                  <div className="sort-overlay" onClick={() => setShowSortMenu(false)} />
+                  <div className="sort-menu">
+                    <button
+                      className={`sort-option ${sortBy === 'rating' ? 'active' : ''}`}
+                      onClick={() => handleSortChange('rating')}
+                    >
+                      ⭐ Rating (High to Low)
+                    </button>
+                    <button
+                      className={`sort-option ${sortBy === 'name' ? 'active' : ''}`}
+                      onClick={() => handleSortChange('name')}
+                    >
+                      🔤 Name (A to Z)
+                    </button>
+                    <button
+                      className={`sort-option ${sortBy === 'category' ? 'active' : ''}`}
+                      onClick={() => handleSortChange('category')}
+                    >
+                      🍽️ Category
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
@@ -170,20 +262,20 @@ function SearchPage() {
             <p>{error}</p>
             <button onClick={fetchRestaurants}>Try Again</button>
           </div>
-        ) : restaurants.length === 0 ? (
+        ) : sortedRestaurants.length === 0 ? (
           <div className="no-results">
             <p>No restaurants found</p>
           </div>
         ) : viewMode === 'map' ? (
           /* Map View */
           <div className="map-view">
-            <RestaurantMap restaurants={restaurants} />
+            <RestaurantMap restaurants={sortedRestaurants} />
             <p className="map-hint">Click on markers to see restaurant details</p>
           </div>
         ) : (
           /* List View */
           <div className="restaurant-grid">
-            {restaurants.map((restaurant) => (
+            {sortedRestaurants.map((restaurant) => (
               <div key={restaurant.id} className="restaurant-card">
                 <div
                   className="restaurant-image"

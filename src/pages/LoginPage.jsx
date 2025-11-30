@@ -29,8 +29,21 @@ function LoginPage() {
     setError('');
     setLoading(true);
 
+    // Start timer
+    const startTime = Date.now();
+    const minLoadingTime = 800; // 800ms for better button spinner visibility 
+
     const result = await login(formData);
 
+    // Calculate remaining time to meet minimum loading time
+    const elapsedTime = Date.now() - startTime;
+    const remainingTime = Math.max(0, minLoadingTime - elapsedTime);
+
+      // Wait if needed
+    if (remainingTime > 0) {
+      await new Promise(resolve => setTimeout(resolve, remainingTime));
+    }
+    
     if (result.success) {
       toast.success(`Welcome back, ${result.data.user.name}! 👋`);
       setTimeout(()=> navigate('/'), 500); // Go to home page
